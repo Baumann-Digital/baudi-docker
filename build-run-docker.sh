@@ -24,4 +24,4 @@ fi
 docker build -f Dockerfile.local -t $imageName .
 
 # run a container
-docker run --rm -it -p 8080:8080 --name $imageName -e EXIST_DEFAULT_APP_PATH=xmldb:exist:///db/apps/BaudiWebApp -e EXIST_PASSWORD=$password -e EXIST_CONTEXT_PATH=/ $imageName
+docker run --rm -it -p 8080:8080 --name $imageName -e EXIST_DEFAULT_APP_PATH=xmldb:exist:///db/apps/baudiApp -e EXIST_PASSWORD=$password -e EXIST_CONTEXT_PATH=/ $imageName
