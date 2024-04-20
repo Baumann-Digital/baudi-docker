@@ -1,0 +1,7 @@
+FROM stadlerpeter/existdb:6.2.0
+
+#ENV EXIST_ENV=production
+ENV EXIST_ENV=development
+ENV JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+
+COPY ./autodeploy/*.xar ${EXIST_HOME}/autodeploy
