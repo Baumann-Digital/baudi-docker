@@ -29,4 +29,8 @@ fi
 docker build -f Dockerfile.local -t $imageName .
 
 # run a container
+# TODO
+# --rm: automatically remove the container when it exits
+# -it: interactive terminal
+# -d: run in detached mode
 docker run --rm -it -p $port:8080 --name $imageName -e EXIST_DEFAULT_APP_PATH=xmldb:exist:///db/apps/baudiApp -e EXIST_PASSWORD=$password -e EXIST_CONTEXT_PATH=/ $imageName
