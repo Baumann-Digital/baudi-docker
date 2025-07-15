@@ -2,14 +2,15 @@
 # build or update the baudi docker image and run it in a container.
 # before you have to add the packages to the autodeploy dir!
 
-#set variables
+# set variables
 imageName=baudi-docker
-containerRunning=$(docker ps -q -f name=$imageName)
-password="${1:-password}"
 port=8080
+password="${1}"
+
 
 # check if the container is already running
 # if yes, it will be stopped and a new one is started
+containerRunning=$(docker ps -q -f name=$imageName)
 if [ $containerRunning ];
 then
   echo 'container '$imageName' is already running, stopping it ...'
