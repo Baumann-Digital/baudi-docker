@@ -6,6 +6,7 @@
 imageName=baudi-docker
 containerRunning=$(docker ps -q -f name=$imageName)
 password="${1:-password}"
+port=8080
 
 # check if the container is already running
 # if yes, it will be stopped and a new one is started
@@ -28,4 +29,4 @@ fi
 docker build -f Dockerfile.local -t $imageName .
 
 # run a container
-docker run --rm -it -p 8080:8080 --name $imageName -e EXIST_DEFAULT_APP_PATH=xmldb:exist:///db/apps/baudiApp -e EXIST_PASSWORD=$password -e EXIST_CONTEXT_PATH=/ $imageName
+docker run --rm -it -p $port:8080 --name $imageName -e EXIST_DEFAULT_APP_PATH=xmldb:exist:///db/apps/baudiApp -e EXIST_PASSWORD=$password -e EXIST_CONTEXT_PATH=/ $imageName
