@@ -7,15 +7,19 @@ imageName=baudi-docker
 containerRunning=$(docker ps -q -f name=$imageName)
 password="${1:-password}"
 
-#check if the container is already running
-#if yes, it will be stopped and a new one is started
-if [ $container ];
+# check if the container is already running
+# if yes, it will be stopped and a new one is started
+if [ $containerRunning ];
 then
+  echo 'container '$imageName' is already running, stopping it ...'
   docker stop $containerRunning
   #sleep 5s
 fi
 
+# check if the image already exists
+# if yes, it will be removed
 if [[ -n "$(docker images -q $imageName)" ]]; then
+  echo 'image '$imageName' already exists, removing it ...'
   docker image rm $imageName
   #sleep 5s
 fi
