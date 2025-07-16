@@ -4,7 +4,7 @@
 
 # set variables
 imageName=baudi-docker
-port=8080
+port=8080 # default: 8080
 password="${1}"
 
 
@@ -27,11 +27,14 @@ if [[ -n "$(docker images -q $imageName)" ]]; then
 fi
 
 # (re)build the docker image
+echo 'building docker image '$imageName' ...'
 docker build -f Dockerfile.local -t $imageName .
 
 # run a container
-# TODO
+# param order: --rm -it -d --restart=always
 # --rm: automatically remove the container when it exits
 # -it: interactive terminal
 # -d: run in detached mode
+# --restart=always: restart the container always, except it's stopped manually
+echo 'running docker container '$imageName' ...'
 docker run --rm -it -p $port:8080 --name $imageName -e EXIST_DEFAULT_APP_PATH=xmldb:exist:///db/apps/baudiApp -e EXIST_PASSWORD=$password -e EXIST_CONTEXT_PATH=/ $imageName
