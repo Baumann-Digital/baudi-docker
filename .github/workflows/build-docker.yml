@@ -93,7 +93,7 @@ jobs:
     - name: Download the Edirom software
       run: |
         # Get the latest release
-        LATEST_RELEASE=$(curl -s "https://api.github.com/repos/Edirom/Edirom-Online/releases/191696703"")
+        LATEST_RELEASE=$(curl -s "https://api.github.com/repos/Edirom/Edirom-Online/releases/191696703")
         
         # Extract the browser download URL for the .xar asset
         DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url')
