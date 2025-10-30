@@ -60,7 +60,7 @@ jobs:
         echo "Software package downloaded successfully"
         ls -la autodeploy/
     
-    - name: Download the software
+    - name: Download the portal-app software
       run: |
         # Get the latest release
         LATEST_RELEASE=$(curl -s "https://api.github.com/repos/Baumann-Digital/portal-app/releases/latest")
@@ -83,6 +83,66 @@ jobs:
         
         # Verify the download
         if [ ! -f "autodeploy/baudiApp-latest.xar" ] || [ ! -s "autodeploy/baudiApp-latest.xar" ]; then
+          echo "Error: Download failed or file is empty"
+          exit 1
+        fi
+        
+        echo "Software package downloaded successfully"
+        ls -la autodeploy/
+    
+    - name: Download the Edirom software
+      run: |
+        # Get the latest release
+        LATEST_RELEASE=$(curl -s "https://api.github.com/repos/Edirom/Edirom-Online/releases/191696703"")
+        
+        # Extract the browser download URL for the .xar asset
+        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url')
+        
+        # Check if download URL was found
+        if [ "$DOWNLOAD_URL" = "null" ] || [ -z "$DOWNLOAD_URL" ]; then
+          echo "Error: No .xar asset found in the latest release"
+          echo "Available assets:"
+          echo "$LATEST_RELEASE" | jq -r '.assets[].name'
+          exit 1
+        fi
+        
+        echo "Downloading from: $DOWNLOAD_URL"
+        
+        # Download the asset
+        curl -L -o autodeploy/edirom-v100.xar "$DOWNLOAD_URL"
+        
+        # Verify the download
+        if [ ! -f "autodeploy/edirom-v100.xar" ] || [ ! -s "autodeploy/edirom-v100.xar" ]; then
+          echo "Error: Download failed or file is empty"
+          exit 1
+        fi
+        
+        echo "Edirom Software package downloaded successfully"
+        ls -la autodeploy/
+    
+    - name: Download the crApp software
+      run: |
+        # Get the latest release
+        LATEST_RELEASE=$(curl -s "https://api.github.com/repos/riedde/crApp/releases/latest")
+        
+        # Extract the browser download URL for the .xar asset
+        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url')
+        
+        # Check if download URL was found
+        if [ "$DOWNLOAD_URL" = "null" ] || [ -z "$DOWNLOAD_URL" ]; then
+          echo "Error: No .xar asset found in the latest release"
+          echo "Available assets:"
+          echo "$LATEST_RELEASE" | jq -r '.assets[].name'
+          exit 1
+        fi
+        
+        echo "Downloading from: $DOWNLOAD_URL"
+        
+        # Download the asset
+        curl -L -o autodeploy/crApp-latest.xar "$DOWNLOAD_URL"
+        
+        # Verify the download
+        if [ ! -f "autodeploy/crApp-latest.xar" ] || [ ! -s "autodeploy/crApp-latest.xar" ]; then
           echo "Error: Download failed or file is empty"
           exit 1
         fi
