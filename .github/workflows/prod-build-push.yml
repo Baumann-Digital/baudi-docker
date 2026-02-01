@@ -1,9 +1,11 @@
-name: Production Build-Push Image
+name: Production (Build-Push)
 
 on:
   push:
     branches: [ main ]
-
+  workflow_dispatch:
+  repository_dispatch:
+    types: [ baudi_data_prod_latest, portal_app_prod_latest ]
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}

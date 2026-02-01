@@ -1,8 +1,11 @@
-name: Development Build-Push Image
+name: Development (Build-Push)
 
 on:
   push:
     branches: [ develop ]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [ baudi_data_dev_latest, portal_app_dev_latest ]
 
 env:
   REGISTRY: ghcr.io
