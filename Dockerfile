@@ -1,4 +1,4 @@
-FROM stadlerpeter/existdb:6.2.0
+FROM stadlerpeter/existdb:6.4.0
 
 LABEL org.opencontainers.image.source=https://github.com/Baumann-Digital/baudi-docker
 LABEL org.opencontainers.image.description="Docker image for deploying the Baumann-Digital-Portal"
