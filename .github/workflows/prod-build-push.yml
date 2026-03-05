@@ -172,7 +172,7 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ${{ env.REGISTRY }}/baumann-digital/baudi-docker:dev
+        tags: ${{ env.REGISTRY }}/baumann-digital/baudi-docker:prod
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
