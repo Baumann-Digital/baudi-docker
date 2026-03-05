@@ -1,9 +1,11 @@
-name: Build and Push Docker Image
+name: Development (Build-Push)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ develop ]
   workflow_dispatch:
+  repository_dispatch:
+    types: [ baudi_data_dev_latest, portal_app_dev_latest ]
 
 env:
   REGISTRY: ghcr.io
@@ -32,45 +34,44 @@ jobs:
 
     - name: Download data package
       run: |
-        # Get the latest release
-        LATEST_RELEASE=$(curl -s "https://api.github.com/repos/Baumann-Digital/baudi-data/releases/latest")
-        
-        # Extract the browser download URL for the .xar asset
-        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url')
-        
-        # Check if download URL was found
-        if [ "$DOWNLOAD_URL" = "null" ] || [ -z "$DOWNLOAD_URL" ]; then
-          echo "Error: No .xar asset found in the latest release"
-          echo "Available assets:"
-          echo "$LATEST_RELEASE" | jq -r '.assets[].name'
-          exit 1
+        # Prefer the release with the title "BauDi Data (Development)".
+        # If not found, fall back to the tag 'dev-latest'.
+        RELEASES_JSON=$(curl -s -H "Accept: application/vnd.github+json" \
+          https://api.github.com/repos/Baumann-Digital/baudi-data/releases)
+
+        DOWNLOAD_URL=$(echo "$RELEASES_JSON" | jq -r '.[] | select(.name=="BauDi Data (Development)") | .assets[] | select(.name|endswith(".xar")) | .browser_download_url' | head -n1)
+
+        if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" = "null" ]; then
+          echo "Release 'BauDi Data (Development)' not found — falling back to tag 'dev-latest'"
+          LATEST_RELEASE=$(curl -L -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/Baumann-Digital/baudi-data/releases/tags/dev-latest)
+          DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name|endswith(".xar")) | .browser_download_url')
         fi
-        
-        echo "Downloading from: $DOWNLOAD_URL"
-        
+
+        if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" = "null" ]; then
+          echo "Error: No .xar asset found for selected release" && exit 1
+        fi
+
         # Download the asset
-        curl -L -o autodeploy/baudiData-latest.xar "$DOWNLOAD_URL"
-        
-        # Verify the download
-        if [ ! -f "autodeploy/baudiData-latest.xar" ] || [ ! -s "autodeploy/baudiData-latest.xar" ]; then
-          echo "Error: Download failed or file is empty"
-          exit 1
-        fi
-        
-        echo "Software package downloaded successfully"
+        curl -L -o autodeploy/baudiData-dev-latest.xar "$DOWNLOAD_URL"
+
+        echo "Data package downloaded successfully"
         ls -la autodeploy/
     
     - name: Download the portal-app software
       run: |
-        # Get the latest release
-        LATEST_RELEASE=$(curl -s "https://api.github.com/repos/Baumann-Digital/portal-app/releases/latest")
+        # Get the latest release from tag 'dev-latest'
+        LATEST_RELEASE=$(curl -L -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/Baumann-Digital/portal-app/releases/tags/dev-latest)
         
         # Extract the browser download URL for the .xar asset
         DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url')
         
         # Check if download URL was found
         if [ "$DOWNLOAD_URL" = "null" ] || [ -z "$DOWNLOAD_URL" ]; then
-          echo "Error: No .xar asset found in the latest release"
+          echo "Error: No .xar asset found in the dev-latest release"
           echo "Available assets:"
           echo "$LATEST_RELEASE" | jq -r '.assets[].name'
           exit 1
@@ -89,7 +90,7 @@ jobs:
         
         echo "Software package downloaded successfully"
         ls -la autodeploy/
-    
+
     - name: Download the Edirom software
       run: |
         # Get the latest release
@@ -119,7 +120,7 @@ jobs:
         
         echo "Edirom Software package downloaded successfully"
         ls -la autodeploy/
-    
+
     - name: Download the crApp software
       run: |
         # Get the latest release
@@ -149,12 +150,12 @@ jobs:
         
         echo "Software package downloaded successfully"
         ls -la autodeploy/
-    
+
     - name: Extract metadata
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        images: ${{ env.REGISTRY }}/baumann-digital/baudi-docker
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -162,12 +163,13 @@ jobs:
           type=raw,value=latest,enable={{is_default_branch}}
 
     - name: Build and push Docker image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: .
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: ${{ env.REGISTRY }}/baumann-digital/baudi-docker:dev
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: EXIST_ENV=development
