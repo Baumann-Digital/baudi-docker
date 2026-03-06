@@ -1,5 +1,13 @@
 # baudi-docker
-Docker image for running the portal
+[Docker image](https://github.com/Baumann-Digital/baudi-docker/pkgs/container/baudi-docker) for running the portal
+
+ ![dev build](https://github.com/Baumann-Digital/baudi-docker/actions/workflows/dev-build-push.yml/badge.svg)
+ 
+ `docker pull ghcr.io/baumann-digital/baudi-docker:dev`
+ 
+ ![prod build](https://github.com/Baumann-Digital/baudi-docker/actions/workflows/prod-build-push.yml/badge.svg)
+
+`docker pull ghcr.io/baumann-digital/baudi-docker:prod`
 
 # Setup
 ## prerequisites
