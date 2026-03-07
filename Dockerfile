@@ -10,3 +10,9 @@ ENV JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
 
 # Copy datapackages from the autodeploy directory (provided by GitHub Actions)
 COPY ./autodeploy/*.xar ${EXIST_HOME}/autodeploy/
+
+# Override healthcheck with longer start-period for autodeploy
+# Note: Always checks localhost:8080 internally, regardless of external port mapping
+# Checks root URL which works in both dev (REST enabled) and production (REST disabled) modes
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
+  CMD curl -f http://localhost:8080/ || exit 1
