@@ -159,8 +159,6 @@ jobs:
         tags: |
           type=raw,value=dev
           type=sha,prefix=dev-
-          type=ref,event=branch
-          type=ref,event=pr
           type=raw,value=latest,enable={{is_default_branch}}
 
     - name: Load manifest annotations
