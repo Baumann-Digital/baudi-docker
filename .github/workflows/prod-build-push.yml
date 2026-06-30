@@ -42,7 +42,7 @@ jobs:
         LATEST_RELEASE=$(echo "$RELEASES_JSON" | jq -r '[.[] | select(.tag_name | test("^v\\d{1,}\\.\\d{1,}\\.\\d{1,}$"))] | .[0]')
         
         # Extract the browser download URL for the .xar asset
-        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url')
+        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url' | head -n1)
         
         # Check if download URL was found
         if [ "$DOWNLOAD_URL" = "null" ] || [ -z "$DOWNLOAD_URL" ]; then
@@ -79,7 +79,7 @@ jobs:
         LATEST_RELEASE=$(echo "$RELEASES_JSON" | jq -r '[.[] | select(.tag_name | test("^v\\d{1,}\\.\\d{1,}\\.\\d{1,}$"))] | .[0]')
         
         # Extract the browser download URL for the .xar asset
-        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url')
+        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url' | head -n1)
         
         # Check if download URL was found
         if [ "$DOWNLOAD_URL" = "null" ] || [ -z "$DOWNLOAD_URL" ]; then
@@ -111,7 +111,7 @@ jobs:
         LATEST_RELEASE=$(curl -s "https://api.github.com/repos/Edirom/Edirom-Online/releases/191696703")
         
         # Extract the browser download URL for the .xar asset
-        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url')
+        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url' | head -n1)
         
         # Check if download URL was found
         if [ "$DOWNLOAD_URL" = "null" ] || [ -z "$DOWNLOAD_URL" ]; then
@@ -141,7 +141,7 @@ jobs:
         LATEST_RELEASE=$(curl -s "https://api.github.com/repos/riedde/crApp/releases/latest")
         
         # Extract the browser download URL for the .xar asset
-        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url')
+        DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r '.assets[] | select(.name | endswith(".xar")) | .browser_download_url' | head -n1)
         
         # Check if download URL was found
         if [ "$DOWNLOAD_URL" = "null" ] || [ -z "$DOWNLOAD_URL" ]; then
