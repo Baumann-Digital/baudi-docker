@@ -1,0 +1,8 @@
+{
+  "annotations": {
+    "org.opencontainers.image.title": "baudi-docker",
+    "org.opencontainers.image.description": "Docker image for deploying the Baumann-Digital portal (multi-arch)",
+    "org.opencontainers.image.source": "https://github.com/Baumann-Digital/baudi-docker",
+    "org.opencontainers.image.licenses": "MIT"
+  }
+}
