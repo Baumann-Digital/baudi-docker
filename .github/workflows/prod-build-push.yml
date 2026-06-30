@@ -171,9 +171,10 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/baumann-digital/baudi-docker
         tags: |
+          type=raw,value=prod
+          type=sha,prefix=prod-
           type=ref,event=branch
           type=ref,event=pr
-          type=sha
           type=raw,value=latest,enable={{is_default_branch}}
 
     - name: Load manifest annotations
@@ -199,7 +200,7 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ${{ env.REGISTRY }}/baumann-digital/baudi-docker:prod
+        tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         annotations: ${{ steps.manifest.outputs.annotations }}
         cache-from: type=gha
