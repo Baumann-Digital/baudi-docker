@@ -7,6 +7,9 @@ imageName=baudi-docker
 port=8080 # default: 8080
 password="${1}"
 
+# Build data-package and application
+ant update-baudi-docker -f ../baudi-data/build.xml
+ant update-baudi-docker -f ../portal-app/build.xml
 
 # check if the container is already running
 # if yes, it will be stopped and a new one is started

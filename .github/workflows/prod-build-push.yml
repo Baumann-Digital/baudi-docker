@@ -171,10 +171,26 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/baumann-digital/baudi-docker
         tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=sha
+          type=raw,value=prod
+          type=sha,prefix=prod-
           type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Load manifest annotations
+      id: manifest
+      run: |
+        TITLE=$(jq -r '.annotations["org.opencontainers.image.title"]' manifest.json)
+        DESCRIPTION=$(jq -r '.annotations["org.opencontainers.image.description"]' manifest.json)
+        SOURCE=$(jq -r '.annotations["org.opencontainers.image.source"]' manifest.json)
+        LICENSES=$(jq -r '.annotations["org.opencontainers.image.licenses"]' manifest.json)
+
+        {
+          echo "annotations<<EOF"
+          echo "index:org.opencontainers.image.title=$TITLE"
+          echo "index:org.opencontainers.image.description=$DESCRIPTION"
+          echo "index:org.opencontainers.image.source=$SOURCE"
+          echo "index:org.opencontainers.image.licenses=$LICENSES"
+          echo "EOF"
+        } >> "$GITHUB_OUTPUT"
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v6
@@ -182,8 +198,9 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ${{ env.REGISTRY }}/baumann-digital/baudi-docker:prod
+        tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        annotations: ${{ steps.manifest.outputs.annotations }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         build-args: EXIST_ENV=production
